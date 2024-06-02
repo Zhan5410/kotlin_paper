@@ -1,0 +1,49 @@
+@startuml ViewModel
+
+!define Composable
+skinparam componentStyle rectangle
+
+' 定義類別
+class MyViewModel {
+    + String refUrl
+    + String apiUrl
+    + String ytUrl
+    + MutableStateFlow<List<Song>> _songflow
+    + StateFlow<List<Song>> songflow
+    + SongDao? songDao
+    + MyViewModel(Application application)
+    + suspend fetchSongOnMixer(reference: String, api: String): MutableList<Song>
+    + suspend setSong(reference: String, api: String)
+    + suspend deleteSong(song: Song)
+    + updateSong(song: Song)
+    + suspend exportSongURLtoFile(context: Context, filename: String)
+}
+
+class Song {
+    + String songId
+    + String songURL
+    + String songImg
+    + String songName
+}
+
+interface SongDao {
+    + Flow<List<Song>> getAll()
+    + Flow<List<Song>> getSongid(String id)
+    + Flow<List<Song>> getSongImg(String songImg)
+    + Flow<List<Song>> getSongName(String songName)
+    + List<String> getSongURL()
+    + suspend void insert(Song song)
+    + suspend void insertAll(List<Song> songs)
+    + suspend void update(Song song)
+    + suspend void delete(Song song)
+}
+
+SongDataBase -|> RoomDatabase
+SongDao --> Song
+SongDataBase --> SongDao
+
+MyViewModel -|> AndroidViewModel
+MyViewModel --> SongDao
+MyViewModel --> Song
+
+@enduml

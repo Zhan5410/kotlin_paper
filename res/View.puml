@@ -1,0 +1,48 @@
+@startuml View
+
+' 定義方向
+top to bottom direction
+
+' 定義View相關類
+package "View" {
+    class MainActivity {
+        - MyViewModel viewModel
+        + onCreate(Bundle?): void
+    }
+
+    class SongItem {
+        + SongItem(items: Song, viewModel: MyViewModel?)
+    }
+
+    class MyApp {
+        + MyApp(viewModel: MyViewModel?)
+    }
+
+    class EditPlayList {
+        + EditPlayList(items: List<Song>, viewModel: MyViewModel?)
+    }
+}
+
+' 定義其他類
+class Song {
+    + String songId
+    + String songURL
+    + String songImg
+    + String songName
+}
+
+class MyViewModel {
+    + songflow: StateFlow<List<Song>>
+    + deleteSong(song: Song): void
+    + exportSongURLtoFile(context: Context, filename: String): void
+}
+
+' 定義關係
+MainActivity --> MyViewModel
+MainActivity --> MyApp
+MyApp --> EditPlayList
+EditPlayList --> SongItem
+SongItem --> Song
+SongItem --> MyViewModel
+
+@enduml

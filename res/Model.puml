@@ -1,0 +1,41 @@
+@startuml Model
+
+!define Composable
+skinparam componentStyle rectangle
+
+' 定義類別，使用不同顏色來表示不同角色
+class Song <<Entity>> #FFDD88 {
+    + String songId
+    + String songURL
+    + String songImg
+    + String songName
+}
+
+' 定義DAO接口
+interface SongDao {
+    + Flow<List<Song>> getAll()
+    + Flow<List<Song>> getSongid(String id)
+    + Flow<List<Song>> getSongImg(String songImg)
+    + Flow<List<Song>> getSongName(String songName)
+    + List<String> getSongURL()
+    + suspend void insert(Song song)
+    + suspend void insertAll(List<Song> songs)
+    + suspend void update(Song song)
+    + suspend void delete(Song song)
+}
+
+' 定義資料庫類別，使用不同顏色來表示不同角色
+abstract class SongDataBase <<Database>> #DDFF88 {
+    + SongDao SongDao()
+    + static SongDataBase getInstance(Context context)
+    + static void destroyInstance()
+}
+
+' 繼承關係
+SongDataBase -|> RoomDatabase
+
+' 依賴關係
+SongDao --> Song
+SongDataBase --> SongDao
+
+@enduml
