@@ -64,8 +64,98 @@ function 和變數
 ## MVVM 中的 Model
 
 定義了 DataBase
+Song 是資料表
+DAO 中定義了基礎的增刪查
+查詢method回傳型態為 Flow
+增和刪皆為 suspend function
 
 ![bg right 100%](./res/Model.png)
+
+---
+
+## MVVM 中的 ViewModel
+
+幾個方法後續附上程式碼介紹
+
+![bg right 100%](./res/ViewModel.png)
+
+---
+
+## fetchSongOnMixer
+
+Jsoup爬蟲，並透過gson解析成jsonObject
+
+```kotlin
+val songDataList = mutableListOf<Song>()
+//以下程式碼運行在IO線程中
+
+//爬蟲並轉換成JsonObject
+val document = Jsoup.connect(api)
+                    .ignoreContentType(true)
+                    .referrer(reference)
+                    .get()
+val jsonStr = document.body().text()
+val jsonObject = JsonParser.parseString(jsonStr)
+                            .asJsonObject
+
+//將JsonObject轉成JsonArray，方便待會遍歷
+val itemListArray = jsonObject.getAsJsonArray("items")
+```
+
+---
+
+## fetchSongOnMixer
+
+最後回傳整個
+
+```kotlin
+//遍歷，透過run簡化，"f" 跟 "tt"都有的狀況下做處理，否則統一回傳不存在
+for (element in itemListArray) {
+    element.asJsonObject.run {
+        if (has("f") && has("tt")) {
+            //"f" 為歌曲的唯一ID
+            val id = element.asJsonObject.get("f").asString
+
+            //透過ID轉換成可訪問的縮圖
+            val imgUrlStart = "https://i.ytimg.com/vi/"
+            val imgUrlEnd = "/default.jpg"
+            val img = imgUrlStart + id + imgUrlEnd
+
+            //"tt" 為歌名
+            val name = element.asJsonObject.get("tt").asString
+
+            val url = ytUrl + id
+
+            //回傳並add到List裡
+            val songData: Song = Song(songId = id, songImg = img, songName = name, songURL = url)
+            songDataList.add(songData)
+        } else {
+            println("歌曲不存在")
+        }
+    }
+}
+```
+
+---
+
+## setSong
+
+負責把抓取到的資料賦值給 Flow 並新增進資料庫
+
+```kotlin
+    private suspend fun setSong(reference: String, api: String){
+        withContext(Dispatchers.IO) {
+            try {
+                _songflow.value = fetchSongOnMixer(reference, api)
+                songDao?.insertAll(_songflow.value)
+            }
+            catch (e : Exception){
+                _songflow.value = emptyList()
+                Log.d("set error", e.message.toString())
+            }
+        }
+    }
+```
 
 ---
 
