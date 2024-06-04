@@ -1,0 +1,18 @@
+@startuml export_song
+actor User
+participant "MyViewModel" as VM
+participant "SongDao" as Dao
+participant "SongDataBase" as DB
+User -> VM: exportSongURLtoFile(context, filename)
+activate VM
+VM -> Dao: getSongURL()
+activate Dao
+Dao -> DB: SELECT Song_url FROM MyPlayList
+activate DB
+DB --> Dao: Song URLs
+deactivate DB
+Dao --> VM: Song URLs
+deactivate Dao
+VM -> User: File exported
+deactivate VM
+@enduml

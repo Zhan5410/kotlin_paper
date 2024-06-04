@@ -1,0 +1,35 @@
+@startuml process
+actor User
+participant MainActivity
+participant MyViewModel
+participant SongDao
+participant RoomDatabase
+
+User -> MainActivity: Open App
+MainActivity -> MyViewModel: onCreate
+activate MyViewModel
+MyViewModel -> RoomDatabase: getInstance(application)
+RoomDatabase -> MyViewModel: return SongDao instance
+MyViewModel -> SongDao: load songs
+deactivate MyViewModel
+
+MyViewModel -> MainActivity: emit songflow
+MainActivity -> User: Show song list
+
+User -> MainActivity: Click Delete Button
+MainActivity -> MyViewModel: deleteSong(song)
+activate MyViewModel
+MyViewModel -> SongDao: delete(song)
+MyViewModel -> MainActivity: update songflow
+deactivate MyViewModel
+MainActivity -> User: update song list
+
+User -> MainActivity: Click Share Button
+MainActivity -> MyViewModel: exportSongURLtoFile(context, filename)
+activate MyViewModel
+MyViewModel -> SongDao: getSongURL()
+MyViewModel -> context: write URLs to file
+deactivate MyViewModel
+MainActivity -> User: File exported
+
+@enduml

@@ -1,0 +1,22 @@
+@startuml TOML_Version_Diagram
+
+!define Version_Color #0066cc
+
+package "Versions" {
+    [agp\n8.3.2] as agp
+    [kotlin\n1.9.0] as kotlin
+    [coreKtx\n1.13.1] as coreKtx
+    [junit\n4.13.2] as junit
+    [junitVersion\n1.1.5] as junitVersion
+    [espressoCore\n3.5.1] as espressoCore
+    [lifecycleRuntimeKtx\n2.8.0] as lifecycleRuntimeKtx
+    [activityCompose\n1.9.0] as activityCompose
+    [composeBom\n2024.05.00] as composeBom
+    [room\n2.6.1] as room
+    [navigation\n2.7.7] as navigation
+    [jsoup\n1.17.2] as jsoup
+    [gson\n2.11.0] as gson
+    [coil\n2.4.0] as coil
+}
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml get_song
+actor User
+participant "View" as View
+participant "MyViewModel" as VM
+participant "Jsoup" as Jsoup
+participant "JsonParser" as Parser
+participant "Dispatcher" as Dispatch
+
+View -> VM: Call fetchSongOnMixer(reference, api)
+activate VM
+VM -> Dispatch: Switch to IO thread
+activate Dispatch
+Dispatch -> Jsoup: Connect to api
+activate Jsoup
+Jsoup -> Jsoup: Get document
+Jsoup --> Dispatch: Document
+deactivate Jsoup
+Dispatch -> Parser: Parse document to Json
+activate Parser
+Parser --> Dispatch: Json Object
+deactivate Parser
+Dispatch -> Dispatch: Convert JsonObject to JsonArray
+Dispatch -> VM: Return songDataList
+deactivate Dispatch
+deactivate VM
+@enduml

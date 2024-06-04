@@ -1,0 +1,18 @@
+@startuml User_Case
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor User as U
+
+rectangle "MixerConverter System" {
+    usecase "Delete Song" as US1
+    usecase "Export Song URL to File" as US2
+    usecase "Get Song List" as US3
+}
+
+U --> US1: Perform
+U --> US2: Perform
+U --> US3: Perform
+
+@enduml
