@@ -3,7 +3,6 @@ actor User as User
 participant View as View
 participant "MyViewModel" as VM
 participant "CoroutineScope" as Scope
-participant "Log" as Log
 
 User -> View: Click on IconButton
 activate View
@@ -11,8 +10,6 @@ View --> VM: Call deleteSong(items)
 activate VM
 VM -> Scope: Launch coroutine
 activate Scope
-Scope -> Log: Log message: IconButton Click
-deactivate Log
 Scope --> VM: Call deleteSong(items)
 activate VM
 VM --> VM: Delete song from database

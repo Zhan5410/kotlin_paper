@@ -1,9 +1,13 @@
 @startuml export_song
 actor User
+participant View
 participant "MyViewModel" as VM
 participant "SongDao" as Dao
 participant "SongDataBase" as DB
-User -> VM: exportSongURLtoFile(context, filename)
+
+User -> View: Clicks share button
+activate View
+View -> VM: exportSongURLtoFile(context, filename)
 activate VM
 VM -> Dao: getSongURL()
 activate Dao
@@ -13,6 +17,8 @@ DB --> Dao: Song URLs
 deactivate DB
 Dao --> VM: Song URLs
 deactivate Dao
-VM -> User: File exported
+VM -> View: File exported
 deactivate VM
+View --> User: File exported
+deactivate View
 @enduml
